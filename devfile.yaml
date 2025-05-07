@@ -44,7 +44,6 @@ components:
   - name: m2
     volume:
       size: 1G
-
   - name: ssh-container
       container:
         image: debian:bullseye
@@ -63,8 +62,7 @@ components:
       volumeMounts:
         - name: ssh-data
           path: /etc/ssh
-  
-    - name: ssh-data
+  - name: ssh-data
       volume: {}
 commands:
   - id: package
