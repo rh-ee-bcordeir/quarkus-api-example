@@ -7,6 +7,8 @@ components:
   - name: tools
     container:
       image: quay.io/devfile/universal-developer-image:ubi9-latest
+      securityContext:
+        runAsUser: 0
       env:
         - name: QUARKUS_HTTP_HOST
           value: 0.0.0.0
@@ -107,6 +109,22 @@ commands:
       commandLine: "oc new-app -e POSTGRESQL_USER=user -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=food_db postgresql:10-el7 -n demo"
       group:
         kind: test
+  - id: setup-ssh
+    exec:
+      label: "Setup SSH"
+      component: tools
+      commandLine: >
+        bash -c "
+        dnf install -y openssh-server passwd &&
+        mkdir -p /var/run/sshd &&
+        echo 'user:devspaces' | chpasswd &&
+        echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
+        echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
+        /usr/sbin/sshd
+        "
+      workingDir: /home/user
+
 events:
   postStart:
+    - setup-ssh
     - package
