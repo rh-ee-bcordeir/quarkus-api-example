@@ -7,8 +7,10 @@ components:
   - name: tools
     container:
       image: quay.io/devfile/universal-developer-image:ubi9-latest
-      securityContext:
-        runAsUser: 0
+      attributes:
+      container-overrides:
+        securityContext:
+          runAsUser: 0
       env:
         - name: QUARKUS_HTTP_HOST
           value: 0.0.0.0
