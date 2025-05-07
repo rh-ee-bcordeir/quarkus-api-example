@@ -16,6 +16,10 @@ components:
           protocol: tcp
           targetPort: 5005
         - exposure: public
+          name: ssh-connect
+          protocol: tcp
+          targetPort: 22
+        - exposure: public
           name: list-all-food
           protocol: https
           targetPort: 8080
