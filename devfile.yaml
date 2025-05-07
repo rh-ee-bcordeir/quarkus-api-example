@@ -46,21 +46,26 @@ components:
       size: 1G
 
   - name: ssh-container
-    container:
-      image: rastasheep/ubuntu-sshd:18.04
-      memoryRequest: 512Mi
-      memoryLimit: 1Gi
-      mountSources: true
-      endpoints:
-        - name: ssh
-          targetPort: 22
-          exposure: public
-          protocol: tcp
-      command: ["/usr/sbin/sshd"]
-      args: ["-D"]  
-      env:
-        - name: SSH_PASSWORD
-          value: a12345678
+      container:
+        image: debian:bullseye
+        memoryRequest: 512Mi
+        memoryLimit: 1Gi
+        mountSources: true
+        endpoints:
+          - name: ssh
+            targetPort: 22
+            exposure: public
+        command: ["/bin/bash"]
+        args: ["-c", "/entrypoint.sh"]
+        volumeMounts:
+          - name: ssh-data
+            path: /etc/ssh
+      volumeMounts:
+        - name: ssh-data
+          path: /etc/ssh
+  
+    - name: ssh-data
+      volume: {}
 commands:
   - id: package
     exec:
@@ -120,11 +125,18 @@ commands:
       commandLine: "oc new-app -e POSTGRESQL_USER=user -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=food_db postgresql:10-el7 -n demo"
       group:
         kind: test
-  - id: start-ssh
+  - id: setup-and-start-ssh
     exec:
-      label: "Start SSH Server"
+      label: "Install & Start SSH"
       component: ssh-container
-      commandLine: "/usr/sbin/sshd -D"
+      commandLine: |
+        apt update && \
+        apt install -y openssh-server && \
+        mkdir -p /var/run/sshd && \
+        echo 'root:root' | chpasswd && \
+        sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin yes/' /etc/ssh/sshd_config && \
+        ssh-keygen -A && \
+        /usr/sbin/sshd -D
       workingDir: /
       group:
         kind: run
