@@ -20,6 +20,10 @@ components:
           protocol: https
           targetPort: 8080
           path: /food
+        - exposure: public
+          name: ssh-expose
+          protocol: tcp
+          targetPort: 22
       volumeMounts:
         - name: m2
           path: /home/user/.m2
