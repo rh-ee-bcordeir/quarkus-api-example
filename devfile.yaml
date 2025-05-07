@@ -64,7 +64,7 @@ components:
       args: ["-D"]  
       env:
         - name: SSH_PASSWORD
-          value: 12345678
+          value: a12345678
 commands:
   - id: package
     exec:
