@@ -48,6 +48,23 @@ components:
   - name: m2
     volume:
       size: 1G
+
+  - name: ssh-container
+    container:
+      image: rastasheep/ubuntu-sshd:18.04
+      memoryRequest: 512Mi
+      memoryLimit: 1Gi
+      mountSources: true
+      endpoints:
+        - name: ssh
+          targetPort: 22
+          exposure: public
+          protocol: tcp
+      command: ["/usr/sbin/sshd"]
+      args: ["-D"]  
+      env:
+        - name: SSH_PASSWORD
+          value: 12345678
 commands:
   - id: package
     exec:
@@ -107,6 +124,15 @@ commands:
       commandLine: "oc new-app -e POSTGRESQL_USER=user -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=food_db postgresql:10-el7 -n demo"
       group:
         kind: test
+  - id: start-ssh
+    exec:
+      label: "Start SSH Server"
+      component: ssh-container
+      commandLine: "/usr/sbin/sshd -D"
+      workingDir: /
+      group:
+        kind: run
+        isDefault: true
 events:
   postStart:
     - package
