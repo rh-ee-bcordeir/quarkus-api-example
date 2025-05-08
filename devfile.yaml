@@ -115,7 +115,7 @@ commands:
       component: tools
       commandLine: >
         bash -c "
-          dnf install -y openssh-server --setopt=tsflags=nodocs &&
+          sudo dnf install -y openssh-server --setopt=tsflags=nodocs &&
           mkdir -p /var/run/sshd &&
           ssh-keygen -A &&
           useradd -m devspaces &&
