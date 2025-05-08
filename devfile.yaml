@@ -110,6 +110,6 @@ commands:
       group:
         kind: test
 
-events:
-  postStart:
-    - package
+# events:
+#   postStart:
+#     - package
