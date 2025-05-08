@@ -32,6 +32,8 @@ components:
       cpuRequest: 1000m
       cpuLimit: 4000m
       mountSources: true
+    attributes:
+      remoteSsh: {}
 
   - name: postgresql
     container:
@@ -107,22 +109,22 @@ commands:
       commandLine: "oc new-app -e POSTGRESQL_USER=user -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=food_db postgresql:10-el7 -n demo"
       group:
         kind: test
-  - id: setup-ssh
+  - id: install-ssh
     exec:
-      label: "Setup SSH"
+      label: "Install and Configure SSH"
       component: tools
       commandLine: >
         bash -c "
-        dnf install -y openssh-server passwd &&
-        mkdir -p /var/run/sshd &&
-        echo 'user:devspaces' | chpasswd &&
-        echo 'PermitRootLogin no' >> /etc/ssh/sshd_config &&
-        echo 'PasswordAuthentication yes' >> /etc/ssh/sshd_config &&
-        /usr/sbin/sshd
+          dnf install -y openssh-server openssh-clients --setopt=tsflags=nodocs &&
+          mkdir -p /var/run/sshd &&
+          ssh-keygen -A &&
+          useradd -m devspaces &&
+          echo 'devspaces:devspaces' | chpasswd &&
+          systemctl start sshd
         "
-      workingDir: /home/user
+      user: root
 
 events:
   postStart:
-    - setup-ssh
+    - install-ssh
     - package
