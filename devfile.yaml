@@ -6,7 +6,7 @@ attributes:
 components:
   - name: tools
     container:
-      image: quay.io/repository/rh-ee-bcordeir/devfile-ssh
+      image: quay.io/repository/rh-ee-bcordeir/devfile-ssh:latest
       env:
         - name: QUARKUS_HTTP_HOST
           value: 0.0.0.0
