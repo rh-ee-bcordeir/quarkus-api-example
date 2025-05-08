@@ -6,7 +6,7 @@ attributes:
 components:
   - name: tools
     container:
-      image: quay.io/devfile/universal-developer-image:ubi9-latest
+      image: quay.io/repository/rh-ee-bcordeir/devfile-ssh
       env:
         - name: QUARKUS_HTTP_HOST
           value: 0.0.0.0
@@ -109,21 +109,7 @@ commands:
       commandLine: "oc new-app -e POSTGRESQL_USER=user -e POSTGRESQL_PASSWORD=password -e POSTGRESQL_DATABASE=food_db postgresql:10-el7 -n demo"
       group:
         kind: test
-  - id: install-ssh
-    exec:
-      label: "Install and Configure SSH"
-      component: tools
-      commandLine: >
-        bash -c "
-          sudo dnf install -y openssh-server --setopt=tsflags=nodocs &&
-          mkdir -p /var/run/sshd &&
-          ssh-keygen -A &&
-          useradd -m devspaces &&
-          echo 'devspaces:devspaces' | chpasswd &&
-          systemctl start sshd
-        "
 
 events:
   postStart:
-    - install-ssh
     - package
