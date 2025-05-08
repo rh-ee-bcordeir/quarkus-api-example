@@ -21,7 +21,7 @@ components:
           targetPort: 8080
           path: /food
         - exposure: public
-          name: ssh-expose
+          name: ssh
           protocol: tcp
           targetPort: 22
       volumeMounts:
@@ -110,6 +110,6 @@ commands:
       group:
         kind: test
 
-events:
-  postStart:
-    - package
+# events:
+#   postStart:
+#     - package
