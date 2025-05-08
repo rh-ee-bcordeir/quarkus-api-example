@@ -23,7 +23,7 @@ components:
         - exposure: public
           name: ssh
           protocol: tcp
-          targetPort: 22
+          targetPort: 2222
       volumeMounts:
         - name: m2
           path: /home/user/.m2
@@ -110,6 +110,6 @@ commands:
       group:
         kind: test
 
-# events:
-#   postStart:
-#     - package
+events:
+  postStart:
+    - package
