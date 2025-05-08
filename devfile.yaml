@@ -122,7 +122,6 @@ commands:
           echo 'devspaces:devspaces' | chpasswd &&
           systemctl start sshd
         "
-      user: root
 
 events:
   postStart:
